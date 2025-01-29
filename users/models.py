@@ -18,3 +18,17 @@ class User(AbstractUser):
     class Meta:
         verbose_name = "Пользователь"
         verbose_name_plural = "Пользователи"
+
+
+class Payment(models.Model):
+    METHOD_CHOICES = [
+        ('cash', 'Наличные'),
+        ('transfer', 'Перевод'),
+    ]
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True, verbose_name='Дата оплаты')
+    course = models.ForeignKey('web_sky.Course', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Оплаченный курс')
+    lesson = models.ForeignKey('web_sky.Lesson', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Оплаченный урок')
+    amount = models.PositiveIntegerField(verbose_name='Сумма оплаты')
+    method = models.CharField(choices=METHOD_CHOICES, max_length=10, verbose_name='Способ оплаты')
+
