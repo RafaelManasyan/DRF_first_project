@@ -1,0 +1,48 @@
+[
+    {
+        "model": "users.user",
+        "pk": 1,
+        "fields": {
+            "username": "john_doe",
+            "email": "john@example.com",
+            "phone_number": "+1234567890",
+            "city": "Москва",
+            "avatar": "media/avatars/john.jpg"
+        }
+    },
+    {
+        "model": "users.user",
+        "pk": 2,
+        "fields": {
+            "username": "jane_doe",
+            "email": "jane@example.com",
+            "phone_number": "+0987654321",
+            "city": "Санкт-Петербург",
+            "avatar": "media/avatars/jane.jpg"
+        }
+    },
+    {
+        "model": "users.payment",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "date": "2025-01-29T12:00:00Z",
+            "course": 1,
+            "lesson": null,
+            "amount": 5000,
+            "method": "transfer"
+        }
+    },
+    {
+        "model": "users.payment",
+        "pk": 2,
+        "fields": {
+            "user": 2,
+            "date": "2025-01-28T15:30:00Z",
+            "course": null,
+            "lesson": null,
+            "amount": 1000,
+            "method": "cash"
+        }
+    }
+]
