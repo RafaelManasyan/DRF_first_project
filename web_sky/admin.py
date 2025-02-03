@@ -1,3 +1,8 @@
 from django.contrib import admin
 
-# Register your models here.
+from web_sky.models import Course
+
+
+@admin.register(Course)
+class CourseAdmin(admin.ModelAdmin):
+    list_display = 'id', 'name', 'owner'
