@@ -8,6 +8,7 @@ from rest_framework.viewsets import ModelViewSet
 
 from users.permissions import IsModers, IsOwner
 from web_sky.models import Course, Lesson, Subscription
+from web_sky.paginators import PagePagination
 from web_sky.serializers import CourseSerializer, LessonSerializer
 
 
@@ -18,6 +19,7 @@ class CourseViewSet(ModelViewSet):
     """
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
+    pagination_class = PagePagination
 
     def get_permissions(self):
         if self.action in ['create', ]:
@@ -37,6 +39,7 @@ class LessonList(ListAPIView):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
     permission_classes = (IsModers | IsAuthenticated, )
+    pagination_class = PagePagination
 
 
 class LessonCreate(CreateAPIView):
