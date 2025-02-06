@@ -1,10 +1,8 @@
 import requests
 import stripe
-from stripe.http_client import RequestsClient
 from django.conf import settings
 
-stripe.api_key = 'sk_test_51QpUY6Q6akmNPxzpeJkc0fcJ5rvTDiSZX8SR5cAbdsdttLYfPYkVMU3M2XC8RKTkRDnFSDZej6vnZQZPboksy72300d5kfKb4f'
-    # settings.STRIPE_SECRET)
+stripe.api_key = settings.STRIPE_SECRET
 
 
 def create_product(name, description="Оплата курса"):
