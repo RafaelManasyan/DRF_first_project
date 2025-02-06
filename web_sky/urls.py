@@ -1,7 +1,8 @@
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
-from web_sky.views import (CourseViewSet, LessonList, LessonDestroy, LessonCreate, LessonRetrieveUpdate,
+from web_sky.views import (CourseViewSet, LessonCreate, LessonDestroy,
+                           LessonList, LessonRetrieveUpdate,
                            SubscriptionAPIView)
 
 app_name = "web_sky"

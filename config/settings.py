@@ -1,8 +1,14 @@
 import os
 from datetime import timedelta
 from pathlib import Path
+
 from dotenv import load_dotenv
 
+
+os.environ.pop('http_proxy', None)
+os.environ.pop('https_proxy', None)
+os.environ.pop('HTTP_PROXY', None)
+os.environ.pop('HTTPS_PROXY', None)
 
 load_dotenv(override=True)
 
@@ -21,13 +27,16 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "corsheaders",
+    "drf_yasg",
     "rest_framework",
-    'rest_framework_simplejwt',
+    "rest_framework_simplejwt",
     "web_sky",
     "users",
 ]
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -117,3 +126,9 @@ SIMPLE_JWT = {
     'AUTH_HEADER_TYPES': ('Bearer',),  # Заголовок, используемый для токенов
 }
 
+CORS_ALLOWED_ORIGINS = [
+    "https://73d9-212-34-155-209.ngrok-free.app",
+]
+
+STRIPE_PUBLIC = os.getenv('STRIPE_PUBLIC')
+STRIPE_SECRET = os.getenv('STRIPE_SECRET')
