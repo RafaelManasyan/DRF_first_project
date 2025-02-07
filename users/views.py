@@ -54,7 +54,7 @@ class UserRegistrationAPIView(CreateAPIView):
 def create_payment_session(request):
     if request.method == "POST":
         # Если данные приходят в формате JSON
-        if request.content_type == 'application/json':
+        if request.content_type.startswith('application/json'):
             try:
                 data = json.loads(request.body)
             except json.JSONDecodeError:

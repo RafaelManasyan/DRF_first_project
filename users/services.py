@@ -15,8 +15,9 @@ def create_product(name, description="Оплата курса"):
 
 def create_price(product_id, amount):
     try:
+        unit_amount = int(float(amount) * 100)
         price = stripe.Price.create(
-            unit_amount=amount,
+            unit_amount=unit_amount,
             currency="rub",
             product=product_id,
         )
