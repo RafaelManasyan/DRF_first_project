@@ -7,6 +7,7 @@ from rest_framework.views import APIView
 
 from users.models import Payment, User
 from users.serializers import PaymentSerializer, UserSerializer
+from web_sky.models import Course
 
 from .services import create_checkout_session, create_price, create_product
 
@@ -46,16 +47,6 @@ class UserRegistrationAPIView(CreateAPIView):
         user.set_password(user.password)
         user.save()
 
-
-
-
-from web_sky.models import Course
-
-# Импорт моделей
-from .models import Payment
-
-# Предполагаем, что функции для работы со Stripe импортированы:
-# from your_stripe_module import create_product, create_price, create_checkout_session
 
 class CreatePaymentSession(APIView):
     permission_classes = [IsAuthenticated]
