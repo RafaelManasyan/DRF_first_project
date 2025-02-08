@@ -50,47 +50,55 @@ class UserRegistrationAPIView(CreateAPIView):
         user.save()
 
 
-@csrf_exempt
-def create_payment_session(request):
-    if request.method == "POST":
-        # Если данные приходят в формате JSON
-        if request.content_type.startswith('application/json'):
-            try:
-                data = json.loads(request.body)
-            except json.JSONDecodeError:
-                return JsonResponse({'error': 'Некорректный JSON'}, status=400)
-        else:
-            data = request.POST
+import json
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated
+
+# Импорт моделей
+from .models import Payment
+from web_sky.models import Course
+
+# Предполагаем, что функции для работы со Stripe импортированы:
+# from your_stripe_module import create_product, create_price, create_checkout_session
+
+class CreatePaymentSession(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, *args, **kwargs):
+        # Используем request.data – DRF самостоятельно разбирает JSON и form-data
+        data = request.data
 
         course_id = data.get("course_id")
         amount_value = data.get("amount")
 
         # Проверяем наличие необходимых данных
         if course_id is None:
-            return JsonResponse({'error': 'Не указан course_id'}, status=400)
+            return Response({'error': 'Не указан course_id'}, status=status.HTTP_400_BAD_REQUEST)
         if amount_value is None:
-            return JsonResponse({'error': 'Не указана сумма оплаты (amount)'}, status=400)
+            return Response({'error': 'Не указана сумма оплаты (amount)'}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             amount = int(amount_value)
         except ValueError:
-            return JsonResponse({'error': 'Неверный формат суммы оплаты'}, status=400)
+            return Response({'error': 'Неверный формат суммы оплаты'}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Получаем данные о курсе, предполагаем, что такая модель существует
+        # Получаем данные о курсе
         try:
             course = Course.objects.get(id=course_id)
         except Course.DoesNotExist:
-            return JsonResponse({'error': 'Курс не найден'}, status=404)
+            return Response({'error': 'Курс не найден'}, status=status.HTTP_404_NOT_FOUND)
 
         # Шаг 1: Создаем продукт в Stripe
         product_id = create_product(course.name)
         if isinstance(product_id, dict) and product_id.get('error'):
-            return JsonResponse({'error': product_id['error']}, status=400)
+            return Response({'error': product_id['error']}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Шаг 2: Создаем цену в Stripe (обратите внимание, что сумма в копейках)
+        # Шаг 2: Создаем цену в Stripe (сумма в копейках)
         price_id = create_price(product_id, amount)
         if isinstance(price_id, dict) and price_id.get('error'):
-            return JsonResponse({'error': price_id['error']}, status=400)
+            return Response({'error': price_id['error']}, status=status.HTTP_400_BAD_REQUEST)
 
         # Определяем URL для успешного завершения и отмены
         success_url = "http://localhost:8000/payments/success/"
@@ -99,9 +107,9 @@ def create_payment_session(request):
         # Шаг 3: Создаем сессию оплаты
         session_url = create_checkout_session(price_id, success_url, cancel_url)
         if isinstance(session_url, dict) and session_url.get('error'):
-            return JsonResponse({'error': session_url['error']}, status=400)
+            return Response({'error': session_url['error']}, status=status.HTTP_400_BAD_REQUEST)
 
-        # Сохраняем информацию о платеже (при условии, что пользователь аутентифицирован)
+        # Сохраняем информацию о платеже
         Payment.objects.create(
             user=request.user,
             course=course,
@@ -109,5 +117,8 @@ def create_payment_session(request):
             method='transfer'
         )
 
-        return JsonResponse({'checkout_url': session_url})
-    return JsonResponse({'error': 'Неверный метод запроса'}, status=400)
+        return Response({'checkout_url': session_url}, status=status.HTTP_200_OK)
+
+    def get(self, request, *args, **kwargs):
+        # Если GET-запрос не поддерживается, можно вернуть ошибку
+        return Response({'error': 'Неверный метод запроса'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
