@@ -1,17 +1,14 @@
-import json
-
-from django.http import JsonResponse
-from django.views.decorators.csrf import csrf_exempt
+from rest_framework import status
 from rest_framework.filters import OrderingFilter
 from rest_framework.generics import CreateAPIView, ListCreateAPIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from users.models import Payment, User
 from users.serializers import PaymentSerializer, UserSerializer
-from web_sky.models import Course
 
-from .models import Payment
-from .services import (create_checkout_session, create_price, create_product)
+from .services import create_checkout_session, create_price, create_product
 
 
 class PaymentListCreateView(ListCreateAPIView):
@@ -50,15 +47,12 @@ class UserRegistrationAPIView(CreateAPIView):
         user.save()
 
 
-import json
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from rest_framework.permissions import IsAuthenticated
+
+
+from web_sky.models import Course
 
 # Импорт моделей
 from .models import Payment
-from web_sky.models import Course
 
 # Предполагаем, что функции для работы со Stripe импортированы:
 # from your_stripe_module import create_product, create_price, create_checkout_session

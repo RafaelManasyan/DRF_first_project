@@ -3,7 +3,8 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import (TokenObtainPairView,
                                             TokenRefreshView)
 
-from users.views import PaymentListCreateView, UserRegistrationAPIView, CreatePaymentSession
+from users.views import (CreatePaymentSession, PaymentListCreateView,
+                         UserRegistrationAPIView)
 
 app_name = "users"
 

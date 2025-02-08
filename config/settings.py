@@ -4,7 +4,6 @@ from pathlib import Path
 
 from dotenv import load_dotenv
 
-
 os.environ.pop('http_proxy', None)
 os.environ.pop('https_proxy', None)
 os.environ.pop('HTTP_PROXY', None)
