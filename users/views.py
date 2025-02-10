@@ -49,16 +49,13 @@ class UserRegistrationAPIView(CreateAPIView):
 
 
 class CreatePaymentSession(APIView):
-    permission_classes = [IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
-        # Используем request.data – DRF самостоятельно разбирает JSON и form-data
         data = request.data
 
         course_id = data.get("course_id")
         amount_value = data.get("amount")
 
-        # Проверяем наличие необходимых данных
         if course_id is None:
             return Response({'error': 'Не указан course_id'}, status=status.HTTP_400_BAD_REQUEST)
         if amount_value is None:
@@ -105,5 +102,4 @@ class CreatePaymentSession(APIView):
         return Response({'checkout_url': session_url}, status=status.HTTP_200_OK)
 
     def get(self, request, *args, **kwargs):
-        # Если GET-запрос не поддерживается, можно вернуть ошибку
         return Response({'error': 'Неверный метод запроса'}, status=status.HTTP_405_METHOD_NOT_ALLOWED)
