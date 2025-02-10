@@ -90,13 +90,12 @@ class Lesson(models.Model):
 
 
 class Subscription(models.Model):
-    user = models.ForeignKey(
+    user = models.ManyToManyField(
         User,
-        on_delete=models.CASCADE,
         related_name='subscriptions',
         verbose_name="Пользователь"
     )
-    course = models.ForeignKey(
+    course = models.OneToOneField(
         Course,
         on_delete=models.CASCADE,
         related_name='subscriptions',
@@ -105,7 +104,6 @@ class Subscription(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата подписки")
 
     class Meta:
-        unique_together = ('user', 'course')
         verbose_name = "Подписка"
         verbose_name_plural = "Подписки"
 

@@ -11,6 +11,7 @@ from users.permissions import IsModers, IsOwner
 from web_sky.models import Course, Lesson, Subscription
 from web_sky.paginators import PagePagination
 from web_sky.serializers import CourseSerializer, LessonSerializer
+from web_sky.tasks import send_course_updating_mail
 
 
 class CourseViewSet(ModelViewSet):
@@ -21,6 +22,14 @@ class CourseViewSet(ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
     pagination_class = PagePagination
+
+    def update(self, request, *args, **kwargs):
+        response = super().update(request, *args, **kwargs)
+        course_id = kwargs.get('pk')
+
+        if course_id:
+            send_course_updating_mail.delay(course_id)
+        return response
 
     def get_permissions(self):
         if self.action in ['create', ]:
@@ -83,13 +92,13 @@ class SubscriptionAPIView(APIView):
             return Response({"message": "Не указан course_id."}, status=status.HTTP_400_BAD_REQUEST)
 
         course = get_object_or_404(Course, id=course_id)
-        subscription = Subscription.objects.filter(user=user, course=course)
+        subscription, created = Subscription.objects.get_or_create(course=course)
 
-        if subscription.exists():
-            subscription.delete()
+        if subscription.user.filter(pk=user.pk).exists():
+            subscription.user.remove(user)
             message = "Подписка удалена"
         else:
-            Subscription.objects.create(user=user, course=course)
+            subscription.user.add(user)
             message = "Подписка добавлена"
 
         return Response({"message": message}, status=status.HTTP_200_OK)
