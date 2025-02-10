@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 
 class Course(models.Model):
     """
@@ -24,6 +26,7 @@ class Course(models.Model):
         verbose_name="Описание",
         help_text="Введите описание курса (необязательно).",
     )
+    owner = models.ForeignKey(User, verbose_name='Владелец курса', on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = "курс"
@@ -72,6 +75,7 @@ class Lesson(models.Model):
         verbose_name="Курс",
         help_text="Выберите курс, к которому относится данный урок.",
     )
+    owner = models.ForeignKey(User, verbose_name='Владелец урока', on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = "урок"
@@ -83,3 +87,25 @@ class Lesson(models.Model):
         Если курс отсутствует, указывается "Без курса".
         """
         return f"{self.name} ({self.course.name if self.course else 'Без курса'})"
+
+
+class Subscription(models.Model):
+    user = models.ManyToManyField(
+        User,
+        related_name='subscriptions',
+        verbose_name="Пользователь"
+    )
+    course = models.OneToOneField(
+        Course,
+        on_delete=models.CASCADE,
+        related_name='subscriptions',
+        verbose_name="Курс"
+    )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Дата подписки")
+
+    class Meta:
+        verbose_name = "Подписка"
+        verbose_name_plural = "Подписки"
+
+    def __str__(self):
+        return f"{self.user} подписан на {self.course}"

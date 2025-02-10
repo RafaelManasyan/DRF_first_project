@@ -4,3 +4,9 @@ python-dotenv==1.0.1
 sqlparse==0.5.3
 djangorestframework==3.15.2
 pillow==11.1.0
+djangorestframework_simplejwt==5.4.0
+stripe==11.5.0
+drf-yasg==1.21.8
+redis==5.2.1
+celery==5.4.0
+django-celery-beat==2.7.0

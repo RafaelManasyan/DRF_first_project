@@ -10,7 +10,7 @@ __pycache__/
 *.DS_Store
 
 # Virtualenv
-.env/
+.env
 .venv/
 env/
 venv/
