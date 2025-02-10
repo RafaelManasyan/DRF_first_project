@@ -57,4 +57,3 @@ class Payment(models.Model):
     lesson = models.ForeignKey('web_sky.Lesson', null=True, blank=True, on_delete=models.SET_NULL, verbose_name='Оплаченный урок')
     amount = models.PositiveIntegerField(verbose_name='Сумма оплаты')
     method = models.CharField(choices=METHOD_CHOICES, max_length=10, verbose_name='Способ оплаты')
-
